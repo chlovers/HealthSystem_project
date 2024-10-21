@@ -38,7 +38,7 @@ public class HealthSystem
             int shieldDamage = Math.Min(shield, damage);
             shield -= shieldDamage;
             damage -= shieldDamage;
-
+            Debug.Assert(90 == shield);
         }
         
         if (health <= 0)
@@ -131,6 +131,10 @@ public class HealthSystem
         xp = 0;
 
     }
-    
-    
+
+    public void Update()
+    {
+        RegenerateShield(1);
+        Heal(1);
+    }
 }
