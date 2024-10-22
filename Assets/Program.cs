@@ -1,6 +1,7 @@
 using JetBrains.Annotations;
 using System;
 using System.Diagnostics;
+
 public class HealthSystem
 {
     // Variables
@@ -38,7 +39,7 @@ public class HealthSystem
             int shieldDamage = Math.Min(shield, damage);
             shield -= shieldDamage;
             damage -= shieldDamage;
-            Debug.Assert(90 == shield);
+        
         }
         
         if (health <= 0)
@@ -62,6 +63,7 @@ public class HealthSystem
             health += hp;
             if (health > maxhealth)
             { health = maxhealth; }
+           
         }
 
         public void RegenerateShield(int hp)
@@ -136,5 +138,175 @@ public class HealthSystem
     {
         RegenerateShield(1);
         Heal(1);
+
+    }
+    
+
+
+
+    public void Test_TakeDamage_OnlyShield()
+    {
+        HealthSystem system = new HealthSystem();
+        system.shield = 100;
+        system.health = 100;
+        system.lives = 3;
+
+        system.TakeDamage(10);
+
+        Debug.Assert(90 == system.shield);
+        Debug.Assert(100 == system.health);
+        Debug.Assert(3 == system.lives);
+    }
+
+    public void Test_TakeDamage_ShieldAndHealth()
+    {
+        HealthSystem system = new HealthSystem();
+        system.shield = 20;
+        system.health = 100;
+        system.lives = 3;
+
+        system.TakeDamage(50);
+
+        Debug.Assert(0 == system.shield);
+        Debug.Assert(80 == system.health);
+        Debug.Assert(3 == system.lives);
+    }
+
+    public void Test_TakeDamage_HealthOnly()
+    {
+        HealthSystem system = new HealthSystem();
+        system.shield = 0;
+        system.health = 100;
+
+        system.TakeDamage(50);
+
+        Debug.Assert(50 == system.health);
+        Debug.Assert(0 == system.shield);
+    }
+
+    public void Test_TakeDamage_HealthToZero()
+    {
+        HealthSystem system = new HealthSystem();
+        system.health = 100;
+        system.lives = 3;
+
+        system.TakeDamage(150);
+
+        Debug.Assert(0 == system.health);
+        Debug.Assert(2 == system.lives);
+    }
+
+    public void Test_TakeDamage_ShieldDepletedAndHealthToZero()
+    {
+        HealthSystem system = new HealthSystem();
+        system.shield = 30;
+        system.health = 30;
+
+        system.TakeDamage(70);
+
+        Debug.Assert(0 == system.shield);
+        Debug.Assert(0 == system.health);
+        Debug.Assert(2 == system.lives); 
+    }
+
+    public void Test_TakeDamage_NegativeDamage()
+    {
+        HealthSystem system = new HealthSystem();
+        system.health = 100;
+        system.shield = 50;
+
+        system.TakeDamage(-10);
+
+        Debug.Assert(100 == system.health);
+        Debug.Assert(50 == system.shield);
+    }
+
+    public void Test_Heal_NormalHealing()
+    {
+        HealthSystem system = new HealthSystem();
+        system.health = 50;
+
+        system.Heal(30);
+
+        Debug.Assert(80 == system.health);
+    }
+
+    public void Test_Heal_MaxHealth()
+    {
+        HealthSystem system = new HealthSystem();
+        system.health = 90;
+
+        system.Heal(20);
+
+        Debug.Assert(100 == system.health); 
+    }
+
+    public void Test_Heal_NegativeHealing()
+    {
+        HealthSystem system = new HealthSystem();
+        system.health = 100;
+
+        system.Heal(-10);
+
+        Debug.Assert(100 == system.health); 
+    }
+
+    public void Test_RegenerateShield_NormalRegeneration()
+    {
+        HealthSystem system = new HealthSystem();
+        system.shield = 20;
+
+        system.RegenerateShield(20);
+
+        Debug.Assert(40 == system.shield);
+    }
+
+    public void Test_RegenerateShield_MaxShield()
+    {
+        HealthSystem system = new HealthSystem();
+
+        system.RegenerateShield(20);
+
+        Debug.Assert(50 == system.shield);
+    }
+
+    public void Test_RegenerateShield_NegativeRegeneration()
+    {
+        HealthSystem system = new HealthSystem();
+
+        system.RegenerateShield(-10);
+
+        Debug.Assert(50 == system.shield); 
+    }
+
+    public void Test_Revive_ResetsHealthAndShield()
+    {
+        HealthSystem system = new HealthSystem();
+        system.health = 50;
+        system.shield = 20;
+
+        system.Revive();
+
+        Debug.Assert(100 == system.health);
+        Debug.Assert(50 == system.shield);
+        Debug.Assert(2 == system.lives); 
+    }
+
+    public void Test_ResetGame_ResetsAllVariables()
+    {
+        HealthSystem system = new HealthSystem();
+        system.health = 50;
+        system.shield = 20;
+        system.lives = 1;
+
+        system.ResetGame();
+
+        Debug.Assert(100 == system.health);
+        Debug.Assert(50 == system.shield);
+        Debug.Assert(3 == system.lives);
+        Debug.Assert(1 == system.level);
+        Debug.Assert(0 == system.xp);
     }
 }
+
+
